@@ -41,5 +41,5 @@ def handle_hello():
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
-    PORT = int(os.environ.get('PORT', 3000))
+    PORT = int(os.environ.get('PORT', 5432))
     app.run(host='0.0.0.0', port=PORT, debug=False)
