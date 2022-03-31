@@ -39,7 +39,25 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+@app.route("/sign-in-company", methods=['POST'])
+def createCompany():
+    body=request.json
+    company=CompanyUser.create(
+        email=body['email'],
+        password=body['password'],
+        phone_number=body['phone_number'],
+        cloudinary_url=body['cloudinary_url'],
+        company_name=body['company_name'],
+        address=body['address'],
+        instagram_url=body['instagram_url']
+    )
+    dictionary= company.serialize()
+    print(dictionary)
+    return jsonify(dictionary),201
+
+
+
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
-    PORT = int(os.environ.get('PORT', 3000))
+    PORT = int(os.environ.get('PORT', 5432))
     app.run(host='0.0.0.0', port=PORT, debug=False)

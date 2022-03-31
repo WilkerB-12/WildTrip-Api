@@ -13,10 +13,8 @@ flask-migrate = "*"
 flask-swagger = "*"
 psycopg2-binary = "*"
 python-dotenv = "*"
-
 flask-cors = "*"
 gunicorn = "*"
-
 flask-admin = "*"
 
 [requires]
