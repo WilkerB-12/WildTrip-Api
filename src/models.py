@@ -18,7 +18,7 @@ class TravelerUser(Base):
 class CompanyUser(Base):
     company_name = db.Column(db.String(120), unique=True, nullable=False)
     address = db.Column(db.String(80), unique=False, nullable=True)
-    instagram_url = db.Column(db.String(80), unique=True, nullable=False)
+    instagram_url = db.Column(db.String(80), unique=True, nullable=True)
 
     @classmethod
     def create(cls, **data):
@@ -54,6 +54,8 @@ class CompanyPost(db.Model):
     city = db.Column(db.String(120), unique=False, nullable=False)
     state = db.Column(db.String(120), unique=False, nullable=False)
     country = db.Column(db.String(120), unique=False, nullable=False)
+    title = db.Column(db.String, unique=False, nullable=False)
+    description = db.Column(db.String, unique=False, nullable=True)
 
     def __repr__(self):
         return '<User %r>' % self.username
