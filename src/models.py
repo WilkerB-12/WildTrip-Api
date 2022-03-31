@@ -36,7 +36,17 @@ class CompanyUser(Base):
             print('FALLA BDD: ',error.args)
             db.session.rollback()
             return None
-            raise Exception(error.args)
+            raise Exception(error.args, 500)
+    def serialize(self):
+        return {
+            "id": self.id,
+            "company_name": self.company_name,
+            "email": self.email,
+            "phone_number": self.phone_number,
+            "address": self.address,
+            "instagram_url": self.instagram_url
+            # do not serialize the password, its a security breach
+        }
 
 class CompanyPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -48,13 +58,3 @@ class CompanyPost(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
     
-    def serialize(self):
-        return {
-            "id": self.id,
-            "company_name": self.company_name,
-            "email": self.email,
-            "phone_number": self.phone_number,
-            "address": self.address,
-            "instagram_url": self.instagram_url
-            # do not serialize the password, its a security breach
-        }
