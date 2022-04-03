@@ -8,7 +8,7 @@ class Base(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
     phone_number = db.Column(db.String(80), unique=False, nullable=False)
-    cloudinary_url=db.Column(db.String(120), unique=True, nullable=True)
+    cloudinary_url=db.Column(db.String(120), unique=False, nullable=True)
 
 class TravelerUser(Base):
     name = db.Column(db.String(120), unique=False, nullable=True)
@@ -19,6 +19,7 @@ class CompanyUser(Base):
     company_name = db.Column(db.String(120), unique=True, nullable=False)
     address = db.Column(db.String(80), unique=False, nullable=True)
     instagram_url = db.Column(db.String(80), unique=True, nullable=True)
+
 
     @classmethod
     def create(cls, **data):
@@ -47,6 +48,11 @@ class CompanyUser(Base):
             "instagram_url": self.instagram_url
             # do not serialize the password, its a security breach
         }
+
+    def __init__(self,**kwargs):
+        for (key, value) in kwargs.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
 
 class CompanyPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
