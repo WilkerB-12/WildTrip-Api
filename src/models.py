@@ -14,11 +14,45 @@ class TravelerUser(Base):
     name = db.Column(db.String(120), unique=False, nullable=True)
     lastname = db.Column(db.String(80), unique=False, nullable=True)
     nickname = db.Column(db.String(80), unique=True, nullable=False)
+   
+    @classmethod
+    def create(cls, **data):
+        #crear instancia
+        instance=cls(**data)
+        if (not isinstance(instance,cls)):
+            print('FALLA EL CONSTRUCTOR')
+            return None
+        #guardar en bdd
+        db.session.add(instance)
+        try:
+            db.session.commit()
+            return instance
+        except Exception as error:
+            print('FALLA BDD: ',error.args)
+            db.session.rollback()
+            return None
+            raise Exception(error.args, 500)
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "phone_number": self.phone_number,
+            "lastname": self.lastname,
+            "nickname": self.nickname
+            # do not serialize the password, its a security breach
+        }
+
+    def __init__(self,**kwargs):
+        for (key, value) in kwargs.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+
 
 class CompanyUser(Base):
     company_name = db.Column(db.String(120), unique=True, nullable=False)
     address = db.Column(db.String(80), unique=False, nullable=True)
-    instagram_url = db.Column(db.String(80), unique=True, nullable=True)
+    instagram_url = db.Column(db.String(80), unique=False, nullable=True)
 
 
     @classmethod

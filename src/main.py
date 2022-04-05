@@ -55,6 +55,22 @@ def createCompany():
     print(dictionary)
     return jsonify(dictionary),201
 
+@app.route("/sign-in-traveler", methods=['POST'])
+def createTraveler():
+    body=request.json
+    traveler=TravelerUser.create(
+        email=body['email'],
+        password=body['password'],
+        phone_number=body['phone_number'],
+        cloudinary_url=body['cloudinary_url'],
+        name=body['name'],
+        lastname=body['lastname'],
+        nickname=body['nickname']
+    )
+    dictionary= traveler.serialize()
+    print(dictionary)
+    return jsonify(dictionary),201
+
 
 
 # this only runs if `$ python src/main.py` is executed
