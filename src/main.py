@@ -1,6 +1,7 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
+from atexit import register
 import os
 from flask import Flask, request, jsonify, url_for
 from flask_migrate import Migrate
@@ -41,35 +42,55 @@ def handle_hello():
 
 @app.route("/sign-in-company", methods=['POST'])
 def createCompany():
-    body=request.json
-    company=CompanyUser.create(
-        email=body['email'],
-        password=body['password'],
-        phone_number=body['phone_number'],
-        cloudinary_url=body['cloudinary_url'],
-        company_name=body['company_name'],
-        address=body['address'],
-        instagram_url=body['instagram_url']
-    )
-    dictionary= company.serialize()
-    print(dictionary)
-    return jsonify(dictionary),201
+    new_email=request.json.get("email",None)
+    new_company_name=request.json.get("company_name",None)
+    registered_email=CompanyUser.query.filter_by(email=new_email).first()
+    registered_company_name=CompanyUser.query.filter_by(company_name=new_company_name).first()
+    if registered_email is not None:
+        return jsonify({"msg":"El email ya está en uso"}),400
+    elif registered_company_name is not None:
+        return jsonify({"msg":"El nombre de la compañía ya está en uso"}),400
+    else:
+        body=request.json
+        company=CompanyUser.create(
+            email=body['email'],
+            password=body['password'],
+            phone_number=body['phone_number'],
+            cloudinary_url=body['cloudinary_url'],
+            company_name=body['company_name'],
+            address=body['address'],
+            instagram_url=body['instagram_url']
+        )
+        dictionary= company.serialize()
+        print(dictionary)
+        return jsonify(dictionary),201
 
 @app.route("/sign-in-traveler", methods=['POST'])
 def createTraveler():
-    body=request.json
-    traveler=TravelerUser.create(
-        email=body['email'],
-        password=body['password'],
-        phone_number=body['phone_number'],
-        cloudinary_url=body['cloudinary_url'],
-        name=body['name'],
-        lastname=body['lastname'],
-        nickname=body['nickname']
-    )
-    dictionary= traveler.serialize()
-    print(dictionary)
-    return jsonify(dictionary),201
+    new_email=request.json.get("email",None)
+    new_nickname=request.json.get("nickname",None)
+    registered_email=TravelerUser.query.filter_by(email=new_email).first()
+    registered_nickname=TravelerUser.query.filter_by(nickname=new_nickname).first()
+    if registered_email is not None:
+        return jsonify({"msg":"El email ya está en uso"}),400
+    elif registered_nickname is not None:
+        return jsonify({"msg":"El nickname ya está en uso"}),400
+    else:
+        body=request.json
+        traveler=TravelerUser.create(
+            email=body['email'],
+            password=body['password'],
+            phone_number=body['phone_number'],
+            cloudinary_url=body['cloudinary_url'],
+            name=body['name'],
+            lastname=body['lastname'],
+            nickname=body['nickname']
+        )
+        dictionary= traveler.serialize()
+        print(dictionary)
+        return jsonify(dictionary),201
+    
+    
 
 
 
