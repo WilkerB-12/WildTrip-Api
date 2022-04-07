@@ -1,21 +1,23 @@
 """
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
-from atexit import register
 import os
 from flask import Flask, request, jsonify, url_for
 from flask_migrate import Migrate
 from flask_swagger import swagger
+from flask_jwt_extended import JWTManager,create_access_token
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, Base, TravelerUser,CompanyUser
+from models import CompanyPost, db, Base, TravelerUser,CompanyUser
 #from models import Person
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['JWT_SECRET_KEY']="secret-wildtrip"
+jwt=JWTManager(app)
 MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
@@ -31,14 +33,35 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
-def handle_hello():
+@app.route("/token",methods=['POST'])
+def create_token():
+    email=request.json.get("email",None)
+    password=request.json.get("password",None)
+    user=CompanyUser.query.filter_by(email=email, password=password).first()
+    if user is None:
+        user=TravelerUser.query.filter_by(email=email, password=password).first()
+    if user is None:
+        return jsonify({"msg":"Error en el email o en la contraseña"}),401
+    access_token = create_access_token(identity=user.id)
+    return jsonify({ "token": access_token, "user_id": user.id })
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
+@app.route('/user-company/<int:id>', methods=['GET'])
+def handle_users_company(id):
+        user=CompanyUser.query.get(id)
+        if user is None:
+            return jsonify({
+                "msg":"not found"
+            })
+        return jsonify(user.serialize()),200
 
-    return jsonify(response_body), 200
+@app.route('/user-traveler/<int:id>', methods=['GET'])
+def handle_users_traveler(id):
+        user=TravelerUser.query.get(id)
+        if user is None:
+            return jsonify({
+                "msg":"not found"
+            })
+        return jsonify(user.serialize()),200
 
 @app.route("/sign-in-company", methods=['POST'])
 def createCompany():
@@ -89,7 +112,40 @@ def createTraveler():
         dictionary= traveler.serialize()
         print(dictionary)
         return jsonify(dictionary),201
+
+@app.route("/posts",methods=['GET','POST'])
+def handlePost():
+    if request.method== 'GET':
+        posts=CompanyPost.query.all()
+        return jsonify(list(map(
+            lambda post: post.serialize(),
+            posts
+        ))),201
     
+    else:
+        body=request.json
+        posts=CompanyPost.create(
+            cloudinary_url=body['cloudinary_url'],
+            city=body['city'],
+            state=body['state'],
+            country=body['country'],
+            title=body['title'],
+            date=body['date'],
+            description=body['description'],
+            company_name=body['company_name']
+        )
+        dictionary= posts.serialize()
+        print(dictionary)
+        return jsonify(dictionary),201
+@app.route("/companies")
+def handleCompanies():
+        companies=CompanyUser.query.all()
+        return jsonify(list(map(
+            lambda user: user.serialize(),
+            companies
+        ))),201
+##@app.route("/posts/<int:>",methods=['GET'])
+##def get_one_post
     
 
 
