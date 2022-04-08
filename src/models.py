@@ -91,7 +91,7 @@ class CompanyUser(Base):
 
 class CompanyPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    cloudinary_url = db.Column(db.String(120), unique=False, nullable=False)
+    cloudinary_url = db.Column(db.String(1000), unique=False, nullable=False)
     city = db.Column(db.String(120), unique=False, nullable=False)
     state = db.Column(db.String(120), unique=False, nullable=False)
     country = db.Column(db.String(120), unique=False, nullable=False)
@@ -99,6 +99,8 @@ class CompanyPost(db.Model):
     description = db.Column(db.String, unique=False, nullable=True)
     date=db.Column(db.String, unique=False, nullable=False)
     company_name=db.Column(db.String, unique=False, nullable=False)
+    phone_number=db.Column(db.String, unique=False, nullable=False)
+    
     @classmethod
     def create(cls, **data):
         #crear instancia
@@ -126,7 +128,9 @@ class CompanyPost(db.Model):
             "country": self.country,
             "title": self.title,
             "description":self.description,
-            "company_name":self.company_name
+            "company_name":self.company_name,
+            "phone_number": self.phone_number,
+            "date":self.date
             # do not serialize the password, its a security breach
         }
 

@@ -132,7 +132,8 @@ def handlePost():
             title=body['title'],
             date=body['date'],
             description=body['description'],
-            company_name=body['company_name']
+            company_name=body['company_name'],
+            phone_number=body['phone_number']
         )
         dictionary= posts.serialize()
         print(dictionary)
