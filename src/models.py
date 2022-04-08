@@ -91,7 +91,7 @@ class CompanyUser(Base):
 
 class CompanyPost(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    cloudinary_url = db.Column(db.String(1000), unique=False, nullable=False)
+    cloudinary_url = db.Column(db.String(120), unique=False, nullable=False)
     city = db.Column(db.String(120), unique=False, nullable=False)
     state = db.Column(db.String(120), unique=False, nullable=False)
     country = db.Column(db.String(120), unique=False, nullable=False)
