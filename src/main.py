@@ -43,7 +43,7 @@ def create_token():
     if user is None:
         return jsonify({"msg":"Error en el email o en la contraseña"}),401
     access_token = create_access_token(identity=user.id)
-    return jsonify({ "token": access_token, "user_id": user.id })
+    return jsonify({ "token": access_token, "user_id": user.id})
 
 @app.route('/user-company/<int:id>', methods=['GET'])
 def handle_users_company(id):

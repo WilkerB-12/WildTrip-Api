@@ -15,7 +15,7 @@ class TravelerUser(Base):
     name = db.Column(db.String(120), unique=False, nullable=True)
     lastname = db.Column(db.String(80), unique=False, nullable=True)
     nickname = db.Column(db.String(80), unique=True, nullable=False)
-   
+    
     @classmethod
     def create(cls, **data):
         #crear instancia
